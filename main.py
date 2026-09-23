@@ -3,6 +3,7 @@ import os
 import aiosqlite  # Changed: sqlite3 → aiosqlite
 import tempfile
 from typing import Optional
+import asyncio
 # Use temporary directory which should be writable
 TEMP_DIR = tempfile.gettempdir()
 DB_PATH = os.path.join(TEMP_DIR, "expenses.db")
@@ -12,7 +13,7 @@ print(f"Database path: {DB_PATH}")
 
 mcp = FastMCP("ExpenseTracker")
 
-def init_db():  # Keep as sync for initialization
+async def init_db():  # Keep as sync for initialization
     try:
         # Use synchronous sqlite3 just for initialization
         import sqlite3
@@ -37,7 +38,7 @@ def init_db():  # Keep as sync for initialization
         raise
 
 # Initialize database synchronously at module load
-init_db()
+asyncio.run(init_db())
 
 @mcp.tool()
 async def add_expense(date, amount, category, subcategory="", note=""):  # Changed: added async
